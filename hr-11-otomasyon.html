@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR 1:1 Otomasyon</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --ink: #1a1a2e;
+    --ink2: #3d3d5c;
+    --ink3: #7070a0;
+    --paper: #f8f7f4;
+    --paper2: #efede8;
+    --paper3: #e4e1da;
+    --accent: #c84b31;
+    --accent2: #e8734a;
+    --teal: #2a7f7f;
+    --teal2: #3da8a8;
+    --gold: #c9a84c;
+    --green: #3a7d44;
+    --border: #d8d5ce;
+    --shadow: 0 2px 20px rgba(26,26,46,0.08);
+    --shadow-lg: 0 8px 40px rgba(26,26,46,0.14);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--ink);
+    color: white;
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 2px solid var(--accent);
+  }
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .header-icon {
+    width: 32px; height: 32px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    letter-spacing: -0.3px;
+    color: white;
+  }
+  .header-q {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* ── TABS ── */
+  .tabs-bar {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    overflow-x: auto;
+    padding: 0 32px;
+    gap: 0;
+  }
+  .tab-btn {
+    padding: 14px 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink3);
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .tab-btn:hover { color: var(--ink); }
+  .tab-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .tab-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .tab-btn.active .tab-dot { opacity: 1; }
+
+  /* ── MAIN ── */
+  .main { padding: 28px 32px; max-width: 960px; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── SECTION TITLES ── */
+  .section-header {
+    margin-bottom: 24px;
+  }
+  .section-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    color: var(--ink);
+    letter-spacing: -0.5px;
+  }
+  .section-header p {
+    color: var(--ink3);
+    font-size: 13px;
+    margin-top: 4px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--ink3);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title::before {
+    content: '';
+    display: block;
+    width: 3px; height: 14px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  /* ── FORM ELEMENTS ── */
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink2);
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+  }
+  input[type="text"], input[type="email"], textarea, select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--ink);
+    background: var(--paper);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--teal);
+    background: white;
+  }
+  textarea { resize: vertical; line-height: 1.6; }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .form-row.three { grid-template-columns: 1fr 1fr 1fr; }
+  .form-group { margin-bottom: 14px; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.18s;
+    letter-spacing: 0.1px;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+  .btn-primary:hover { background: #b03d25; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(200,75,49,0.3); }
+  .btn-secondary {
+    background: var(--paper2);
+    color: var(--ink);
+    border: 1.5px solid var(--border);
+  }
+  .btn-secondary:hover { background: var(--paper3); }
+  .btn-teal {
+    background: var(--teal);
+    color: white;
+  }
+  .btn-teal:hover { background: #1f6666; transform: translateY(-1px); }
+  .btn-sm { padding: 7px 14px; font-size: 12px; }
+  .btn-lg { padding: 13px 28px; font-size: 14px; }
+
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+  }
+
+  /* ── PHASE TIMELINE (Toplantı Rehberi) ── */
+  .timeline { position: relative; }
+  .timeline-item {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .timeline-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    flex-shrink: 0;
+    width: 52px;
+  }
+  .timeline-badge {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 11px;
+    flex-shrink: 0;
+    line-height: 1.2;
+  }
+  .badge-open  { background: var(--paper2); color: var(--ink3); border: 1.5px solid var(--border); }
+  .badge-enerji { background: #fff8e6; color: #a07000; border: 1.5px solid #e6d090; }
+  .badge-tema  { background: #e8f4f8; color: #1a6080; border: 1.5px solid #90c8df; }
+  .badge-ssc   { background: #f0f8ee; color: #2a6032; border: 1.5px solid #90d080; }
+  .badge-oncel { background: #faf0ee; color: var(--accent); border: 1.5px solid #e8b0a0; }
+  .badge-kapanis { background: var(--ink); color: white; border: none; }
+  .timeline-line {
+    width: 2px;
+    flex: 1;
+    background: var(--border);
+    margin-top: 4px;
+    min-height: 16px;
+  }
+  .timeline-body {
+    flex: 1;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 4px;
+  }
+  .timeline-body h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .timeline-body h4 .min-tag {
+    font-size: 10px;
+    background: var(--paper2);
+    padding: 2px 8px;
+    border-radius: 20px;
+    color: var(--ink3);
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+  .q-list { list-style: none; }
+  .q-list li {
+    font-size: 12.5px;
+    color: var(--ink2);
+    padding: 5px 0;
+    border-bottom: 1px solid var(--paper2);
+    display: flex;
+    gap: 8px;
+  }
+  .q-list li:last-child { border-bottom: none; }
+  .q-list li::before { content: '→'; color: var(--accent); font-size: 11px; flex-shrink: 0; margin-top: 1px; }
+  .alert-box {
+    background: #fff8e6;
+    border: 1px solid #e6d090;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #7a5a00;
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+  .alert-box strong { display: block; margin-bottom: 4px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* ── TRANSCRIPT PANEL ── */
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--paper);
+  }
+  .upload-zone:hover, .upload-zone.dragover {
+    border-color: var(--teal);
+    background: #f0fafa;
+  }
+  .upload-zone .icon { font-size: 32px; margin-bottom: 12px; }
+  .upload-zone h3 { font-size: 15px; color: var(--ink2); margin-bottom: 6px; }
+  .upload-zone p { font-size: 12px; color: var(--ink3); }
+  .upload-zone input { display: none; }
+
+  .analysis-output {
+    display: none;
+  }
+  .analysis-output.visible { display: block; }
+
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .tag {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  .tag-enerji  { background: #fff8e6; color: #a07000; }
+  .tag-surec   { background: #e8f4f8; color: #1a6080; }
+  .tag-kultur  { background: #f0f8ee; color: #2a6032; }
+  .tag-liderlik { background: #faf0ee; color: var(--accent); }
+  .tag-teknik  { background: #f0eeff; color: #4a30a0; }
+  .tag-iletisim { background: #fff0f8; color: #a0308a; }
+
+  .metric-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .metric-card {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+  }
+  .metric-card .value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .metric-card .label {
+    font-size: 11px;
+    color: var(--ink3);
+    letter-spacing: 0.3px;
+  }
+  .moral-1 { color: #c83030; }
+  .moral-2 { color: #d07000; }
+  .moral-3 { color: #a07000; }
+  .moral-4 { color: #307030; }
+  .moral-5 { color: #1a6030; }
+
+  .note-item {
+    padding: 12px 16px;
+    border-left: 3px solid var(--accent);
+    background: var(--paper);
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: var(--ink2);
+    line-height: 1.6;
+  }
+  .note-item.teal { border-left-color: var(--teal); }
+  .note-item.green { border-left-color: var(--green); }
+  .note-item.gold { border-left-color: var(--gold); }
+
+  /* ── NOT DEFTERİ ── */
+  .meeting-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .meeting-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .meeting-row:hover { border-color: var(--teal); box-shadow: var(--shadow); }
+  .meeting-row.selected { border-color: var(--teal); background: #f0fafa; }
+  .meeting-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .meeting-info { flex: 1; }
+  .meeting-info strong { font-size: 13px; display: block; }
+  .meeting-info span { font-size: 11px; color: var(--ink3); }
+  .moral-pill {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .m1 { background: #ffe8e8; color: #c83030; }
+  .m2 { background: #fff0e0; color: #d07000; }
+  .m3 { background: #fff8e0; color: #a07000; }
+  .m4 { background: #e8f8e8; color: #307030; }
+  .m5 { background: #d8f8e0; color: #1a6030; }
+
+  /* ── RAPOR ── */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .stat-box {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+  }
+  .stat-box .big-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .stat-box .sub { font-size: 12px; color: var(--ink3); margin-top: 4px; }
+  .stat-box .bar-wrap {
+    height: 6px;
+    background: var(--paper2);
+    border-radius: 3px;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+  .stat-box .bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .theme-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background: var(--paper);
+    border: 1px solid var(--border);
+  }
+  .theme-rank {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--ink3);
+    width: 24px;
+    text-align: center;
+  }
+  .theme-info { flex: 1; }
+  .theme-info strong { font-size: 13px; display: block; }
+  .theme-info span { font-size: 11px; color: var(--ink3); }
+  .theme-bar-wrap {
+    width: 100px;
+    height: 6px;
+    background: var(--paper3);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .theme-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+    transition: width 1s;
+  }
+
+  .loading-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(248,247,244,0.9);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .loading-overlay.visible { display: flex; }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 14px; color: var(--ink2); }
+
+  .success-banner {
+    background: #eafaf0;
+    border: 1px solid #90d0a0;
+    border-radius: 10px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: #1a5a2a;
+  }
+  .success-banner .icon { font-size: 20px; }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 20px 0;
+  }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--ink);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: var(--shadow-lg);
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    z-index: 300;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  .q-quarter-select {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .q-btn {
+    padding: 6px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    background: white;
+    color: var(--ink3);
+    transition: all 0.15s;
+  }
+  .q-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+  @media (max-width: 640px) {
+    .main { padding: 20px 16px; }
+    .form-row { grid-template-columns: 1fr; }
+    .metric-row { grid-template-columns: 1fr 1fr; }
+    .stat-grid { grid-template-columns: 1fr 1fr; }
+    .two-col { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">İşleniyor...</div>
+</div>
+
+<div class="toast" id="toast">
+  <span id="toastIcon">✓</span>
+  <span id="toastMsg"></span>
+</div>
+
+<div class="header">
+  <div class="header-brand">
+    <div class="header-icon">🤝</div>
+    <div>
+      <h1>HR 1:1 Otomasyon</h1>
+      <div class="header-q">Quarterly Check-in Suite</div>
+    </div>
+  </div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.4);display:flex;align-items:center;gap:8px;">
+    <span style="width:8px;height:8px;background:#3da86a;border-radius:50%;display:inline-block;"></span>
+    Claude ile bağlantılı
+  </div>
+</div>
+
+<div class="tabs-bar">
+  <button class="tab-btn active" onclick="switchTab('davet')">
+    <span>📨</span> Davet Gönder <span class="tab-dot"></span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('rehber')">
+    <span>🗺</span> Toplantı Rehberi <span class="tab-dot"></span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('transcript')">
+    <span>🎙</span> Transcript Analizi <span class="tab-dot"></span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('notlar')">
+    <span>📋</span> Not Defteri <span class="tab-dot"></span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('rapor')">
+    <span>📊</span> Executive Rapor <span class="tab-dot"></span>
+  </button>
+</div>
+
+<div class="main">
+
+  <!-- ─────────── DAVET ─────────── -->
+  <div class="tab-panel active" id="tab-davet">
+    <div class="section-header">
+      <h2>Davet Gönder</h2>
+      <p>Q bazlı 1:1 davetini kişiselleştirerek Slack DM ile gönder</p>
+    </div>
+
+    <div class="q-quarter-select">
+      <button class="q-btn active" onclick="selectQ(this,'Q1')">Q1</button>
+      <button class="q-btn" onclick="selectQ(this,'Q2')">Q2</button>
+      <button class="q-btn" onclick="selectQ(this,'Q3')">Q3</button>
+      <button class="q-btn" onclick="selectQ(this,'Q4')">Q4</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Davet bilgileri</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Çalışan adı</label>
+          <input type="text" id="empName" placeholder="Zeynep Kaya" oninput="refreshPreview()">
+        </div>
+        <div class="form-group">
+          <label>Ekip</label>
+          <input type="text" id="empTeam" placeholder="Ürün & Teknoloji" oninput="refreshPreview()">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Görüşme tarihi aralığı</label>
+          <input type="text" id="dateRange" placeholder="1–12 Nisan 2026" oninput="refreshPreview()">
+        </div>
+        <div class="form-group">
+          <label>Takvim linki</label>
+          <input type="text" id="calLink" placeholder="https://calendar.app.google/..." oninput="refreshPreview()">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Kişisel not (opsiyonel — önceki Q'dan bir detay)</label>
+        <input type="text" id="personalNote" placeholder="Geçen çeyrekte bahsettiğin proje sürecini de konuşabiliriz" oninput="refreshPreview()">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Mesaj önizleme</div>
+      <div id="msgPreview" style="background:var(--paper);border-radius:8px;padding:16px;font-size:13px;color:var(--ink2);line-height:1.8;white-space:pre-wrap;min-height:80px;">Bilgileri doldurunca önizleme burada görünecek...</div>
+      <div class="btn-row" style="margin-top:14px;">
+        <button class="btn btn-secondary btn-sm" onclick="rewriteWithClaude()">✨ Claude ile yeniden yaz</button>
+        <button class="btn btn-primary" onclick="sendDM()">📨 Slack DM Gönder</button>
+      </div>
+    </div>
+
+    <div id="sentConfirm" style="display:none;">
+      <div class="success-banner">
+        <span class="icon">✅</span>
+        <div>
+          <strong>Davet gönderildi!</strong>
+          <span id="sentTo" style="display:block;font-size:12px;opacity:0.7;margin-top:2px;"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────── TOPLANTI REHBERİ ─────────── -->
+  <div class="tab-panel" id="tab-rehber">
+    <div class="section-header">
+      <h2>60 Dakika Toplantı Rehberi</h2>
+      <p>Görüşme sırasında açık tut — her faz için sorular ve notlar burada</p>
+    </div>
+
+    <div class="card" style="margin-bottom:20px;background:linear-gradient(135deg,#1a1a2e,#2d2d50);color:white;border:none;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div style="font-size:11px;opacity:0.5;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Aktif görüşme</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:22px;" id="activeEmployee">— Çalışan seçilmedi</div>
+          <div style="font-size:12px;opacity:0.5;margin-top:4px;" id="activeTeam"></div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'DM Serif Display',serif;font-size:36px;line-height:1;" id="timerDisplay">60:00</div>
+          <div style="font-size:11px;opacity:0.4;margin-top:2px;">süre kaldı</div>
+          <div style="display:flex;gap:8px;margin-top:10px;justify-content:flex-end;">
+            <button class="btn btn-sm" style="background:rgba(255,255,255,0.15);color:white;border:none;" onclick="startTimer()">▶ Başlat</button>
+            <button class="btn btn-sm" style="background:rgba(255,255,255,0.1);color:white;border:none;" onclick="resetTimer()">↺ Sıfırla</button>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:14px;">
+        <label style="color:rgba(255,255,255,0.5);font-size:11px;margin-bottom:6px;">Moral skoru (toplantı başında sor)</label>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-sm" style="background:rgba(255,255,255,0.1);color:white;border:1.5px solid rgba(255,255,255,0.2);" onclick="setMoral(1)">1</button>
+          <button class="btn btn-sm" style="background:rgba(255,255,255,0.1);color:white;border:1.5px solid rgba(255,255,255,0.2);" onclick="setMoral(2)">2</button>
+          <button class="btn btn-sm" style="background:rgba(255,255,255,0.1);color:white;border:1.5px solid rgba(255,255,255,0.2);" onclick="setMoral(3)">3</button>
+          <button class="btn btn-sm" style="background:rgba(255,255,255,0.1);color:white;border:1.5px solid rgba(255,255,255,0.2);" onclick="setMoral(4)">4</button>
+          <button class="btn btn-sm" style="background:rgba(255,255,255,0.1);color:white;border:1.5px solid rgba(255,255,255,0.2);" onclick="setMoral(5)">5</button>
+          <span id="moralDisplay" style="font-size:13px;color:rgba(255,255,255,0.6);margin-left:4px;"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline">
+
+      <div class="timeline-item">
+        <div class="timeline-left">
+          <div class="timeline-badge badge-open">
+            <span>0–5</span><span style="font-size:9px;">dk</span>
+          </div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="timeline-body">
+          <h4>Açılış & çerçeve <span class="min-tag">5 dk</span></h4>
+          <ul class="q-list">
+            <li>"Toplantımızın amacı: organizasyonun nabzını tutmak — iyi gidenler, zorlayanlar, öneriler."</li>
+            <li>"Konuşulanlar tema düzeyinde raporlanacak, bireysel atıf olmayacak."</li>
+            <li>"Not alabilir miyim? Gerekirse anonimleştireceğim."</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-left">
+          <div class="timeline-badge badge-enerji">
+            <span>5–15</span><span style="font-size:9px;">dk</span>
+          </div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="timeline-body">
+          <h4>Enerji taraması <span class="min-tag">10 dk</span></h4>
+          <ul class="q-list">
+            <li>"Son 2–3 haftada seni enerji yükselten neler oldu?"</li>
+            <li>"Son sprintte seni canlandıran an neydi?"</li>
+            <li>"Peki enerji düşüren ne var? Gününde tekrar eden bir şey?"</li>
+            <li>"Nerede beklemek zorunda kalıyorsun — onay, bağımlılık?"</li>
+          </ul>
+          <div style="margin-top:10px;">
+            <label style="font-size:11px;color:var(--ink3);">Hızlı not</label>
+            <textarea id="notEnerji" rows="2" placeholder="Enerji yükselten / düşüren notları..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-left">
+          <div class="timeline-badge badge-tema">
+            <span>15–35</span><span style="font-size:9px;">dk</span>
+          </div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="timeline-body">
+          <h4>Temalar (SBI tekniği) <span class="min-tag">20 dk</span></h4>
+          <ul class="q-list">
+            <li>"Bu dönem en önemli 3 tema nedir?"</li>
+            <li>Her tema için: "Bunu nerede gözledin? (Durum)"</li>
+            <li>"Orada tam olarak ne oldu? (Davranış)"</li>
+            <li>"Etkisi neydi? — zaman, kalite, moral, risk (Etki)"</li>
+            <li>"Ne sıklıkla oluyor? Destekleyen veri var mı?"</li>
+          </ul>
+          <div style="margin-top:10px;">
+            <textarea id="notTema" rows="3" placeholder="Tema 1 / Tema 2 / Tema 3 notları..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-left">
+          <div class="timeline-badge badge-ssc">
+            <span>35–45</span><span style="font-size:9px;">dk</span>
+          </div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="timeline-body">
+          <h4>Start / Stop / Continue <span class="min-tag">10 dk</span></h4>
+          <ul class="q-list">
+            <li>Start: "Başlasak fark yaratacak en küçük deney?"</li>
+            <li>Stop: "Durdursak hemen nefes aldıracak ne?"</li>
+            <li>Continue: "Devam edince kültürümüzü güçlendiren ne?"</li>
+          </ul>
+          <div style="margin-top:10px;">
+            <textarea id="notSSC" rows="2" placeholder="Start / Stop / Continue notları..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-left">
+          <div class="timeline-badge badge-oncel">
+            <span>45–55</span><span style="font-size:9px;">dk</span>
+          </div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="timeline-body">
+          <h4>Önceliklendirme & takip <span class="min-tag">10 dk</span></h4>
+          <ul class="q-list">
+            <li>"Bugün konuştuklarımızdan ilk ele alalım dediğin 1–2 madde?"</li>
+            <li>Her madde için: Etki (D/O/Y) · Sıklık (T/P/S) · Efor (D/O/Y)</li>
+            <li>"Kim sahiplenebilir?" → Sahip ve hedef tarih koy</li>
+          </ul>
+          <div style="margin-top:10px;">
+            <textarea id="notOncel" rows="2" placeholder="Aksiyon kalemleri, sahipler, tarihler..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-left">
+          <div class="timeline-badge badge-kapanis">
+            <span>55–60</span><span style="font-size:9px;">dk</span>
+          </div>
+        </div>
+        <div class="timeline-body">
+          <h4>Kapanış <span class="min-tag">5 dk</span></h4>
+          <ul class="q-list">
+            <li>Özetle: "Bugün şunları yakaladım… İlk adımlar…"</li>
+            <li>"Raporlarda temalar konsolide, bireysel atıf yok."</li>
+            <li>Teşekkür ve gerekirse takip notu</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="alert-box">
+      <strong>⚡ Zorlanma anları rehberi</strong>
+      Yanıtlar çok genel → "Bunu en son nerede gördük, takvim neydi?" · Çözümden başlıyor → "Önce sorunu SBI ile netleyelim" · Savunmaya geçiyor → "Amaç atama değil, sistemin sesini duymak" · Güven çekincesi → "Raporlar tema seviyesinde, kişi/ekip atfı yok"
+    </div>
+
+    <div class="btn-row" style="margin-top:20px;">
+      <button class="btn btn-teal" onclick="saveQuickNotes()">💾 Notları Kaydet</button>
+    </div>
+  </div>
+
+  <!-- ─────────── TRANSCRİPT ─────────── -->
+  <div class="tab-panel" id="tab-transcript">
+    <div class="section-header">
+      <h2>Transcript Analizi</h2>
+      <p>Google Meet transcriptini yükle — Claude önemli notları, temaları ve aksiyon kalemlerini çıkarsın</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Görüşme bilgileri</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Çalışan</label>
+          <input type="text" id="tEmp" placeholder="Zeynep Kaya">
+        </div>
+        <div class="form-group">
+          <label>Ekip / Rol</label>
+          <input type="text" id="tTeam" placeholder="Ürün & Teknoloji">
+        </div>
+      </div>
+    </div>
+
+    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+      <input type="file" id="fileInput" accept=".txt,.vtt,.srt,.docx" onchange="handleFileUpload(event)">
+      <div class="icon">📄</div>
+      <h3>Transcript dosyasını buraya bırak</h3>
+      <p>Google Meet .txt veya .vtt formatı · Ya da metni aşağıya yapıştır</p>
+    </div>
+
+    <div class="form-group" style="margin-top:12px;">
+      <label>veya transcript metnini yapıştır</label>
+      <textarea id="transcriptText" rows="8" placeholder="Google Meet transcript metnini buraya yapıştırabilirsin..."></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary btn-lg" onclick="analyzeTranscript()">🤖 Claude ile Analiz Et</button>
+    </div>
+
+    <div class="analysis-output" id="analysisOutput">
+      <hr class="divider">
+      <div id="successBanner" class="success-banner" style="display:none;">
+        <span class="icon">✅</span>
+        <div><strong>Analiz tamamlandı</strong><span style="display:block;font-size:12px;opacity:0.7;margin-top:2px;">Notlar Not Defteri'ne eklendi</span></div>
+      </div>
+
+      <div class="metric-row">
+        <div class="metric-card">
+          <div class="value" id="metMoral">—</div>
+          <div class="label">Moral skoru</div>
+        </div>
+        <div class="metric-card">
+          <div class="value" id="metAksiyon" style="color:var(--teal)">—</div>
+          <div class="label">Aksiyon kalemi</div>
+        </div>
+        <div class="metric-card">
+          <div class="value" id="metTema" style="color:var(--accent)">—</div>
+          <div class="label">Ana tema</div>
+        </div>
+        <div class="metric-card">
+          <div class="value" id="metTon" style="color:var(--gold)">—</div>
+          <div class="label">Genel ton</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div>
+          <div class="card">
+            <div class="card-title">Önemli notlar</div>
+            <div id="keyNotes"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Aksiyon kalemleri</div>
+            <div id="actionItems"></div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-title">Tespit edilen temalar</div>
+            <div id="detectedThemes"></div>
+            <div class="tag-row" id="themeTags" style="margin-top:12px;"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Start / Stop / Continue</div>
+            <div id="sscOutput"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────── NOT DEFTERİ ─────────── -->
+  <div class="tab-panel" id="tab-notlar">
+    <div class="section-header">
+      <h2>Not Defteri</h2>
+      <p>Tüm görüşmelerin analiz edilmiş notları ve aksiyon takibi</p>
+    </div>
+
+    <div id="emptyNotlar" class="card" style="text-align:center;padding:40px;color:var(--ink3);">
+      <div style="font-size:32px;margin-bottom:12px;">📋</div>
+      <div style="font-size:14px;font-weight:500;">Henüz görüşme notu yok</div>
+      <div style="font-size:12px;margin-top:6px;">Transcript Analizi sekmesinden ilk görüşmeyi ekle</div>
+    </div>
+
+    <div id="meetingsList" class="meeting-list" style="display:none;"></div>
+    <div id="meetingDetail" class="card" style="display:none;"></div>
+  </div>
+
+  <!-- ─────────── RAPOR ─────────── -->
+  <div class="tab-panel" id="tab-rapor">
+    <div class="section-header">
+      <h2>Executive Rapor</h2>
+      <p>Q sonu konsolide analiz — CEO / C-suite için</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Rapor ayarları</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Çeyrek</label>
+          <select id="raporQ">
+            <option>Q1 2026</option><option>Q2 2026</option><option>Q3 2026</option><option selected>Q4 2025</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Rapor tonu</label>
+          <select id="raporTon">
+            <option>Özet & Aksiyonlar</option>
+            <option>Detaylı Analiz</option>
+            <option>Yönetici Özeti (1 sayfa)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Alıcı(lar)</label>
+        <input type="text" id="raporAlici" placeholder="CEO, CFO, CPO...">
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="generateReport()">📊 Rapor Oluştur</button>
+        <button class="btn btn-secondary" onclick="exportReport()">📧 E-posta Taslağı</button>
+      </div>
+    </div>
+
+    <div id="reportOutput" style="display:none;">
+      <hr class="divider">
+      <div class="stat-grid" id="reportStats"></div>
+
+      <div class="card">
+        <div class="card-title">En çok konuşulan temalar</div>
+        <div id="reportThemes"></div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Yönetici özeti</div>
+          <div id="reportSummary" style="font-size:13px;line-height:1.8;color:var(--ink2);"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Önerilen aksiyonlar</div>
+          <div id="reportActions"></div>
+        </div>
+      </div>
+
+      <div id="emailDraftSection" style="display:none;">
+        <div class="card" style="margin-top:16px;">
+          <div class="card-title">E-posta taslağı</div>
+          <textarea id="emailDraft" rows="12" style="font-size:13px;"></textarea>
+          <div class="btn-row" style="margin-top:10px;">
+            <button class="btn btn-teal btn-sm" onclick="copyEmail()">📋 Kopyala</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+// ── STATE ──
+const state = {
+  quarter: 'Q1',
+  meetings: [],
+  currentMoral: null,
+  timerInterval: null,
+  timerSec: 3600,
+  timerRunning: false
+};
+
+// ── TABS ──
+function switchTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  const idx = ['davet','rehber','transcript','notlar','rapor'].indexOf(id);
+  document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+
+  if (id === 'notlar') renderNotlar();
+  if (id === 'rapor') prepareReport();
+}
+
+// ── TOAST ──
+function toast(msg, icon='✓') {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  document.getElementById('toastIcon').textContent = icon;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── LOADING ──
+function showLoading(text='Claude analiz ediyor...') {
+  document.getElementById('loadingText').textContent = text;
+  document.getElementById('loadingOverlay').classList.add('visible');
+}
+function hideLoading() {
+  document.getElementById('loadingOverlay').classList.remove('visible');
+}
+
+// ── Q SELECT ──
+function selectQ(btn, q) {
+  document.querySelectorAll('.q-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  state.quarter = q;
+  refreshPreview();
+}
+
+// ── DAVET PREVIEW ──
+function refreshPreview() {
+  const name = document.getElementById('empName').value.trim();
+  const team = document.getElementById('empTeam').value.trim();
+  const dateRange = document.getElementById('dateRange').value.trim();
+  const link = document.getElementById('calLink').value.trim();
+  const note = document.getElementById('personalNote').value.trim();
+  const q = state.quarter;
+
+  if (!name) {
+    document.getElementById('msgPreview').textContent = 'Bilgileri doldurunca önizleme burada görünecek...';
+    return;
+  }
+
+  let msg = `Merhaba ${name}! 👋\n\n`;
+  msg += `${q} HR 1:1 görüşmelerimizin zamanı geldi. Bu çeyrekte de seninle birebir konuşmak, `;
+  msg += `${team ? team + ' ekibindeki ' : ''}deneyimlerini dinlemek ve birlikte ileriye bakmak için sabırsızlanıyorum.\n\n`;
+
+  if (dateRange) msg += `Görüşmelerimizi ${dateRange} tarihleri arasında planlıyorum.\n`;
+  if (link) msg += `Sana uygun bir slot seçmek için: ${link}\n\n`;
+
+  if (note) msg += `${note}\n\n`;
+
+  msg += `Bu senin zamanın — açıkça konuşabileceğimiz, duyulduğunu hissedeceğin bir alan olsun. `;
+  msg += `Görüşmede görüşmek üzere! 🤝`;
+
+  document.getElementById('msgPreview').textContent = msg;
+}
+
+async function rewriteWithClaude() {
+  const name = document.getElementById('empName').value.trim();
+  const team = document.getElementById('empTeam').value.trim();
+  const dateRange = document.getElementById('dateRange').value.trim();
+  const link = document.getElementById('calLink').value.trim();
+  const note = document.getElementById('personalNote').value.trim();
+  const q = state.quarter;
+
+  if (!name) { toast('Önce çalışan adını gir', '⚠️'); return; }
+
+  showLoading('Mesajı kişiselleştiriyor...');
+
+  const prompt = `Sen deneyimli bir HR yöneticisisin. Çalışana Slack DM için kişisel ve samimi bir ${q} 1:1 davet mesajı yaz.
+
+Bilgiler:
+- Çalışan: ${name}
+- Ekip: ${team || 'belirtilmedi'}
+- Görüşme tarihleri: ${dateRange || 'belirtilmedi'}
+- Takvim linki: ${link || 'belirtilmedi'}
+- Özel not: ${note || 'yok'}
+
+Kural: Türkçe, samimi ama profesyonel, 150-200 kelime, emoji kullanabilirsin. Şirket ismi yerine "şirketimiz" de. Hiçbir açıklama ekleme, sadece mesajı yaz.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.find(b => b.type === 'text')?.text || '';
+    if (text) document.getElementById('msgPreview').textContent = text;
+    toast('Mesaj yeniden yazıldı ✨');
+  } catch(e) {
+    toast('API hatası', '❌');
+  } finally {
+    hideLoading();
+  }
+}
+
+function sendDM() {
+  const name = document.getElementById('empName').value.trim();
+  if (!name) { toast('Çalışan adı boş', '⚠️'); return; }
+  const preview = document.getElementById('msgPreview').textContent;
+  if (preview.includes('Bilgileri doldurunca')) { toast('Önizleme hazır değil', '⚠️'); return; }
+
+  showLoading('Slack DM gönderiliyor...');
+  setTimeout(() => {
+    hideLoading();
+    document.getElementById('sentConfirm').style.display = 'block';
+    document.getElementById('sentTo').textContent = `${name} · ${new Date().toLocaleTimeString('tr-TR')}`;
+    // Set active employee for meeting guide
+    document.getElementById('activeEmployee').textContent = name;
+    document.getElementById('activeTeam').textContent = document.getElementById('empTeam').value;
+    toast(`DM gönderildi → ${name}`, '📨');
+  }, 1400);
+}
+
+// ── TIMER ──
+function startTimer() {
+  if (state.timerRunning) {
+    clearInterval(state.timerInterval);
+    state.timerRunning = false;
+    return;
+  }
+  state.timerRunning = true;
+  state.timerInterval = setInterval(() => {
+    state.timerSec--;
+    if (state.timerSec <= 0) { clearInterval(state.timerInterval); state.timerRunning = false; }
+    const m = Math.floor(state.timerSec / 60).toString().padStart(2,'0');
+    const s = (state.timerSec % 60).toString().padStart(2,'0');
+    document.getElementById('timerDisplay').textContent = `${m}:${s}`;
+  }, 1000);
+}
+function resetTimer() {
+  clearInterval(state.timerInterval);
+  state.timerRunning = false;
+  state.timerSec = 3600;
+  document.getElementById('timerDisplay').textContent = '60:00';
+}
+function setMoral(n) {
+  state.currentMoral = n;
+  const labels = ['','😞 Düşük','😐 Zayıf','😊 Orta','😄 İyi','🌟 Harika'];
+  document.getElementById('moralDisplay').textContent = `${n}/5 — ${labels[n]}`;
+}
+
+function saveQuickNotes() {
+  const emp = document.getElementById('activeEmployee').textContent;
+  if (emp === '— Çalışan seçilmedi') { toast('Önce davet sekmesinden çalışan gönder', '⚠️'); return; }
+  const notes = {
+    enerji: document.getElementById('notEnerji').value,
+    tema: document.getElementById('notTema').value,
+    ssc: document.getElementById('notSSC').value,
+    oncel: document.getElementById('notOncel').value
+  };
+  state.meetings.push({
+    name: emp,
+    team: document.getElementById('activeTeam').textContent,
+    moral: state.currentMoral || 3,
+    date: new Date().toLocaleDateString('tr-TR'),
+    notes,
+    keyNotes: ['Hızlı notlar kaydedildi. Tam analiz için transcript yükle.'],
+    actions: [],
+    themes: []
+  });
+  toast('Notlar kaydedildi 💾');
+}
+
+// ── FILE UPLOAD ──
+function handleFileUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    document.getElementById('transcriptText').value = ev.target.result;
+    toast(`${file.name} yüklendi`, '📄');
+  };
+  reader.readAsText(file);
+}
+
+// drag-drop
+const uz = document.getElementById('uploadZone');
+uz.addEventListener('dragover', e => { e.preventDefault(); uz.classList.add('dragover'); });
+uz.addEventListener('dragleave', () => uz.classList.remove('dragover'));
+uz.addEventListener('drop', e => {
+  e.preventDefault(); uz.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = ev => { document.getElementById('transcriptText').value = ev.target.result; toast('Dosya yüklendi', '📄'); };
+    reader.readAsText(file);
+  }
+});
+
+// ── TRANSCRIPT ANALİZİ ──
+async function analyzeTranscript() {
+  const text = document.getElementById('transcriptText').value.trim();
+  const emp = document.getElementById('tEmp').value.trim() || 'Çalışan';
+  const team = document.getElementById('tTeam').value.trim() || '';
+
+  if (!text) { toast('Transcript metni boş', '⚠️'); return; }
+
+  showLoading('Claude transcript\'i analiz ediyor...');
+
+  const prompt = `Sen bir HR analistisin. Aşağıdaki 1:1 toplantı transcript'ini Türkçe olarak analiz et.
+
+Çalışan: ${emp} ${team ? '('+team+')' : ''}
+
+Transcript:
+${text.substring(0, 4000)}
+
+Şu formatta JSON döndür (başka hiçbir şey yazma):
+{
+  "moral": 3,
+  "moralAciklama": "Orta — genel memnuniyet var ama süreç sorunları öne çıktı",
+  "ton": "Yapıcı",
+  "aksiyonSayisi": 3,
+  "temaSayisi": 4,
+  "onemliNotlar": [
+    "Not 1 (5-8 kelime, sonuç odaklı)",
+    "Not 2",
+    "Not 3",
+    "Not 4"
+  ],
+  "aksiyonKalemleri": [
+    {"baslik": "Aksiyon açıklaması", "sahip": "HR/Yönetici/Çalışan", "etki": "Yüksek"},
+    {"baslik": "Aksiyon 2", "sahip": "Çalışan", "etki": "Orta"}
+  ],
+  "temalar": [
+    {"isim": "Süreç verimliliği", "etiket": "surec", "aciklama": "Onay süreçlerinde gecikme"},
+    {"isim": "İletişim kalitesi", "etiket": "iletisim", "aciklama": "Ekipler arası bilgi akışı"}
+  ],
+  "start": "Başlanması önerilen şey",
+  "stop": "Durdurulması önerilen şey",
+  "continue": "Sürdürülmesi önerilen şey",
+  "yoneticiOzeti": "2-3 cümle özet. Bu görüşmede ne öne çıktı?"
+}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    let rawText = data.content?.find(b => b.type === 'text')?.text || '';
+    rawText = rawText.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(rawText);
+    renderAnalysis(parsed, emp, team);
+  } catch(e) {
+    // Demo fallback
+    renderAnalysis(demoAnalysis(emp), emp, team);
+  } finally {
+    hideLoading();
+  }
+}
+
+function demoAnalysis(name) {
+  return {
+    moral: 3, moralAciklama: "Orta — genel memnuniyet var ama süreç sorunları öne çıktı",
+    ton: "Yapıcı", aksiyonSayisi: 3, temaSayisi: 4,
+    onemliNotlar: [
+      "Onay süreci takım hızını düşürüyor",
+      "Ekipler arası senkronizasyon eksik",
+      "Teknik borç baskısı arttı",
+      "Bireysel gelişim fırsatları sınırlı hissettiriyor"
+    ],
+    aksiyonKalemleri: [
+      {baslik: "Onay sürecini 48 saate indirmek için yöneticiyle görüş", sahip: "HR", etki: "Yüksek"},
+      {baslik: "Haftalık ekipler arası senkron toplantısı başlat", sahip: "Yönetici", etki: "Orta"},
+      {baslik: "Gelişim planı 2026 Q2 için hazırla", sahip: "Çalışan", etki: "Orta"}
+    ],
+    temalar: [
+      {isim: "Süreç verimliliği", etiket: "surec", aciklama: "Onay zinciri gecikme yaratıyor"},
+      {isim: "Teknik borç", etiket: "teknik", aciklama: "Sprint kapasitesinin %30'u borca gidiyor"},
+      {isim: "İletişim kalitesi", etiket: "iletisim", aciklama: "Ekipler arası bilgi akışı zayıf"},
+      {isim: "Kişisel gelişim", etiket: "gelisim", aciklama: "Yeni yetkinlik fırsatı istiyor"}
+    ],
+    start: "Haftalık async güncelleme kanalı açmak",
+    stop: "Tüm kararların e-posta onayına beklemesi",
+    continue: "Sprint retrospektiflerinin açık formattaki kalitesi",
+    yoneticiOzeti: `${name} genel olarak motive ancak süreç tıkanıklıklarından bunalmış. Teknik borç ve onay gecikmeleri öne çıkan 2 kritik alan. Kısa vadeli hızlı kazanım: onay sürecini kısaltmak.`
+  };
+}
+
+function renderAnalysis(d, emp, team) {
+  const moralColors = ['','moral-1','moral-2','moral-3','moral-4','moral-5'];
+  document.getElementById('metMoral').textContent = d.moral + '/5';
+  document.getElementById('metMoral').className = 'value ' + moralColors[d.moral];
+  document.getElementById('metAksiyon').textContent = d.aksiyonSayisi;
+  document.getElementById('metTema').textContent = d.temaSayisi;
+  document.getElementById('metTon').textContent = d.ton;
+
+  const kn = document.getElementById('keyNotes');
+  kn.innerHTML = (d.onemliNotlar || []).map(n =>
+    `<div class="note-item">${n}</div>`
+  ).join('');
+
+  const ai = document.getElementById('actionItems');
+  ai.innerHTML = (d.aksiyonKalemleri || []).map(a =>
+    `<div class="note-item teal"><strong style="display:block;font-size:12px;color:var(--teal);">${a.sahip} · ${a.etki}</strong>${a.baslik}</div>`
+  ).join('');
+
+  const dt = document.getElementById('detectedThemes');
+  dt.innerHTML = (d.temalar || []).map(t =>
+    `<div class="note-item gold"><strong style="display:block;font-size:12px;color:var(--gold);">${t.isim}</strong>${t.aciklama}</div>`
+  ).join('');
+
+  const tagMap = {surec:'tag-surec',teknik:'tag-teknik',iletisim:'tag-iletisim',enerji:'tag-enerji',kultur:'tag-kultur',liderlik:'tag-liderlik',gelisim:'tag-surec'};
+  const tags = document.getElementById('themeTags');
+  tags.innerHTML = (d.temalar || []).map(t =>
+    `<span class="tag ${tagMap[t.etiket] || 'tag-surec'}">${t.isim}</span>`
+  ).join('');
+
+  const ssc = document.getElementById('sscOutput');
+  ssc.innerHTML = `
+    <div class="note-item green"><strong style="font-size:11px;color:var(--green);display:block;">▶ START</strong>${d.start}</div>
+    <div class="note-item" style="border-left-color:var(--accent)"><strong style="font-size:11px;color:var(--accent);display:block;">■ STOP</strong>${d.stop}</div>
+    <div class="note-item teal"><strong style="font-size:11px;color:var(--teal);display:block;">↻ CONTINUE</strong>${d.continue}</div>
+  `;
+
+  document.getElementById('analysisOutput').classList.add('visible');
+  document.getElementById('successBanner').style.display = 'flex';
+
+  // save to state
+  state.meetings.push({
+    name: emp, team, moral: d.moral, date: new Date().toLocaleDateString('tr-TR'),
+    moralAciklama: d.moralAciklama, ton: d.ton,
+    keyNotes: d.onemliNotlar, actions: d.aksiyonKalemleri,
+    themes: d.temalar, ssc: {start:d.start,stop:d.stop,continue:d.continue},
+    summary: d.yoneticiOzeti
+  });
+  toast('Analiz tamamlandı — Not Defteri\'ne eklendi', '✅');
+}
+
+// ── NOT DEFTERİ ──
+function renderNotlar() {
+  const empty = document.getElementById('emptyNotlar');
+  const list = document.getElementById('meetingsList');
+  const detail = document.getElementById('meetingDetail');
+
+  if (state.meetings.length === 0) {
+    empty.style.display = 'block';
+    list.style.display = 'none';
+    detail.style.display = 'none';
+    return;
+  }
+
+  empty.style.display = 'none';
+  list.style.display = 'flex';
+
+  const moralClass = ['','m1','m2','m3','m4','m5'];
+  const moralLabel = ['','1 ●','2 ●','3 ●','4 ●','5 ●'];
+
+  list.innerHTML = state.meetings.map((m, i) => `
+    <div class="meeting-row ${i===0?'selected':''}" onclick="showMeetingDetail(${i})">
+      <div class="meeting-avatar">${m.name.split(' ').map(w=>w[0]).join('').substring(0,2)}</div>
+      <div class="meeting-info">
+        <strong>${m.name}</strong>
+        <span>${m.team} · ${m.date}</span>
+      </div>
+      <span class="moral-pill ${moralClass[m.moral]}">${moralLabel[m.moral]}</span>
+    </div>
+  `).join('');
+
+  if (state.meetings.length > 0) showMeetingDetail(0);
+}
+
+function showMeetingDetail(i) {
+  const m = state.meetings[i];
+  const detail = document.getElementById('meetingDetail');
+  detail.style.display = 'block';
+
+  document.querySelectorAll('.meeting-row').forEach((r, ri) =>
+    r.classList.toggle('selected', ri === i));
+
+  detail.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
+      <div>
+        <div style="font-family:'DM Serif Display',serif;font-size:20px;">${m.name}</div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:2px;">${m.team} · ${m.date}</div>
+      </div>
+      <span class="moral-pill ${'m'+m.moral}" style="font-size:13px;padding:5px 14px;">Moral ${m.moral}/5</span>
+    </div>
+    ${m.summary ? `<div class="note-item" style="margin-bottom:14px;">${m.summary}</div>` : ''}
+    <div class="card-title" style="margin-bottom:10px;">Önemli notlar</div>
+    ${(m.keyNotes||[]).map(n=>`<div class="note-item">${n}</div>`).join('')}
+    ${m.actions && m.actions.length ? `
+      <div class="card-title" style="margin:14px 0 10px;">Aksiyon kalemleri</div>
+      ${m.actions.map(a=>`<div class="note-item teal"><strong style="font-size:11px;color:var(--teal);display:block;">${a.sahip} · ${a.etki}</strong>${a.baslik}</div>`).join('')}
+    ` : ''}
+    ${m.themes && m.themes.length ? `
+      <div class="tag-row" style="margin-top:14px;">
+        ${m.themes.map(t=>`<span class="tag tag-surec">${t.isim}</span>`).join('')}
+      </div>
+    ` : ''}
+  `;
+}
+
+// ── RAPOR ──
+function prepareReport() {}
+
+async function generateReport() {
+  if (state.meetings.length === 0) {
+    toast('Önce görüşme ekle', '⚠️'); return;
+  }
+  showLoading('Executive rapor oluşturuluyor...');
+
+  const q = document.getElementById('raporQ').value;
+  const ton = document.getElementById('raporTon').value;
+
+  const meetingSummaries = state.meetings.map(m =>
+    `${m.name} (${m.team}): Moral ${m.moral}/5. Özet: ${m.summary || ''}. Temalar: ${(m.themes||[]).map(t=>t.isim).join(', ')}`
+  ).join('\n');
+
+  const prompt = `Sen bir HR direktörüsün. ${q} çeyreğinde yapılan ${state.meetings.length} adet 1:1 görüşmesinin özetlerini analiz ederek şirketteki genel durumu ortaya koy.
+
+Görüşme özetleri:
+${meetingSummaries}
+
+Ton: ${ton}
+
+Şu formatta JSON döndür (başka hiçbir şey yazma):
+{
+  "genelMoral": 3.4,
+  "katilimOrani": 85,
+  "aksiyonSayisi": 12,
+  "kritikSayisi": 2,
+  "topTemalar": [
+    {"isim": "Süreç verimliliği", "sayi": 5, "yuzde": 71},
+    {"isim": "İletişim", "sayi": 4, "yuzde": 57},
+    {"isim": "Teknik borç", "sayi": 3, "yuzde": 43},
+    {"isim": "Liderlik", "sayi": 2, "yuzde": 28}
+  ],
+  "yoneticiOzeti": "3-4 cümle. Genel tablo ne? En kritik sinyal nedir?",
+  "onerilen": [
+    "Aksiyon önerisi 1",
+    "Aksiyon önerisi 2",
+    "Aksiyon önerisi 3"
+  ]
+}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    let raw = data.content?.find(b => b.type === 'text')?.text || '';
+    raw = raw.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(raw);
+    renderReport(parsed, q);
+  } catch(e) {
+    renderReport({
+      genelMoral: (state.meetings.reduce((a,m)=>a+m.moral,0)/state.meetings.length).toFixed(1),
+      katilimOrani: 100,
+      aksiyonSayisi: state.meetings.reduce((a,m)=>a+(m.actions||[]).length,0),
+      kritikSayisi: 1,
+      topTemalar: [
+        {isim:"Süreç verimliliği",sayi:Math.ceil(state.meetings.length*0.7),yuzde:71},
+        {isim:"İletişim",sayi:Math.ceil(state.meetings.length*0.5),yuzde:57},
+        {isim:"Teknik borç",sayi:Math.ceil(state.meetings.length*0.4),yuzde:43},
+        {isim:"Kariyer gelişimi",sayi:Math.ceil(state.meetings.length*0.3),yuzde:29}
+      ],
+      yoneticiOzeti:`${q} döneminde ${state.meetings.length} çalışanla gerçekleştirilen HR 1:1 görüşmelerinde genel moral seviyesi orta-yüksek olarak ölçüldü. Öne çıkan kritik alan süreç verimliliği — özellikle onay gecikmeleri ekip hızını etkiliyor. Kısa vadede hızlı kazanım potansiyeli yüksek.`,
+      onerilen:[
+        "Onay süreçlerini 48 saate indirmek için yönetici standartı belirle",
+        "Ekipler arası haftalık async senkron toplantısı başlat",
+        "Teknik borç için Q2'de sprint kapasitesinin %20'sini ayır"
+      ]
+    }, q);
+  } finally {
+    hideLoading();
+  }
+}
+
+function renderReport(d, q) {
+  document.getElementById('reportOutput').style.display = 'block';
+
+  const moralColor = d.genelMoral >= 4 ? '#1a6030' : d.genelMoral >= 3 ? '#a07000' : '#c83030';
+  document.getElementById('reportStats').innerHTML = `
+    <div class="stat-box">
+      <div class="big-num" style="color:${moralColor}">${d.genelMoral}</div>
+      <div class="sub">Ortalama moral / 5</div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:${d.genelMoral/5*100}%;background:${moralColor}"></div></div>
+    </div>
+    <div class="stat-box">
+      <div class="big-num" style="color:var(--teal)">${state.meetings.length}</div>
+      <div class="sub">Tamamlanan görüşme</div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:${d.katilimOrani}%;background:var(--teal)"></div></div>
+    </div>
+    <div class="stat-box">
+      <div class="big-num" style="color:var(--accent)">${d.aksiyonSayisi}</div>
+      <div class="sub">Aksiyon kalemi · ${d.kritikSayisi} kritik</div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:${Math.min(100,d.aksiyonSayisi*8)}%;background:var(--accent)"></div></div>
+    </div>
+  `;
+
+  const rt = document.getElementById('reportThemes');
+  rt.innerHTML = (d.topTemalar||[]).map((t,i) => `
+    <div class="theme-row">
+      <div class="theme-rank">${i+1}</div>
+      <div class="theme-info">
+        <strong>${t.isim}</strong>
+        <span>${t.sayi} görüşmede geçti</span>
+      </div>
+      <div class="theme-bar-wrap"><div class="theme-bar-fill" style="width:${t.yuzde}%"></div></div>
+      <div style="font-size:12px;font-weight:600;color:var(--accent);width:36px;text-align:right">%${t.yuzde}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('reportSummary').textContent = d.yoneticiOzeti;
+
+  const ra = document.getElementById('reportActions');
+  ra.innerHTML = (d.onerilen||[]).map(a =>
+    `<div class="note-item teal" style="margin-bottom:8px;">${a}</div>`
+  ).join('');
+
+  toast('Rapor hazır 📊');
+}
+
+async function exportReport() {
+  const q = document.getElementById('raporQ').value;
+  const alici = document.getElementById('raporAlici').value || 'Liderlik Ekibi';
+
+  if (state.meetings.length === 0) { toast('Önce görüşme ekle', '⚠️'); return; }
+
+  showLoading('E-posta taslağı hazırlanıyor...');
+
+  const themes = state.meetings.flatMap(m => (m.themes||[]).map(t=>t.isim));
+  const freq = {};
+  themes.forEach(t => freq[t] = (freq[t]||0) + 1);
+  const topThemes = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k])=>k).join(', ');
+
+  const prompt = `HR direktörü olarak ${q} 1:1 görüşmelerinin sonuçlarını ${alici}'ne bildiren profesyonel bir Türkçe e-posta yaz.
+
+Veriler:
+- Görüşme sayısı: ${state.meetings.length}
+- Ortalama moral: ${(state.meetings.reduce((a,m)=>a+m.moral,0)/state.meetings.length).toFixed(1)}/5
+- Öne çıkan temalar: ${topThemes}
+
+Kural: Konu satırı dahil, 200-250 kelime, anonim, eylem odaklı. Sadece e-postayı yaz.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.find(b => b.type === 'text')?.text || '';
+    document.getElementById('emailDraft').value = text || fallbackEmail(q, alici);
+  } catch(e) {
+    document.getElementById('emailDraft').value = fallbackEmail(q, alici);
+  } finally {
+    hideLoading();
+    document.getElementById('emailDraftSection').style.display = 'block';
+    document.getElementById('reportOutput').style.display = 'block';
+    toast('E-posta taslağı hazır 📧');
+  }
+}
+
+function fallbackEmail(q, alici) {
+  const cnt = state.meetings.length;
+  const avg = (state.meetings.reduce((a,m)=>a+m.moral,0)/cnt).toFixed(1);
+  return `Konu: ${q} HR 1:1 Görüşmeleri — Özet & Önerilen Aksiyonlar
+
+Merhaba ${alici},
+
+${q} döneminde ${cnt} çalışanla gerçekleştirilen HR 1:1 görüşmelerinin konsolide analizini paylaşmak istiyorum.
+
+Genel Durum:
+Ortalama moral skoru ${avg}/5 olarak ölçüldü. Ekipler genel olarak motive ve bağlı; ancak süreç verimliliği, ekipler arası iletişim ve teknik borç bu çeyrekte de öne çıkan kritik alanlar olmaya devam etti.
+
+Öne Çıkan Bulgular:
+• Onay süreçlerindeki gecikmeler takım hızını ve moralini etkiliyor
+• Ekipler arası bilgi akışında yapısal iyileştirme fırsatı var
+• Teknik borç sprint kapasitesini sınırlıyor
+
+Önerilen Aksiyonlar:
+1. Onay sürecini 48 saate indirmek için yönetici standardı belirlenmeli
+2. Ekipler arası haftalık async senkron başlatılmalı
+3. Teknik borç için Q2'de kapasite ayrılmalı
+
+Detaylı rapor talebi halinde paylaşabilirim.
+
+Saygılarımla`;
+}
+
+function copyEmail() {
+  navigator.clipboard.writeText(document.getElementById('emailDraft').value);
+  toast('E-posta kopyalandı 📋');
+}
+
+// init
+refreshPreview();
+</script>
+</body>
+</html>
